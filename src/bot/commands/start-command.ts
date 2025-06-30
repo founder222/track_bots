@@ -24,8 +24,8 @@ export class StartCommand {
         return
       }
 
-      // Find existing user
-      const user = await this.prismaUserRepository.getById(userId)
+      // Use upsert to handle user creation/update safely
+      const user = await this.prismaUserRepository.upsert({ firstName, id: userId, lastName, username })
 
       const messageText = GeneralMessages.startMessage(user)
 
@@ -33,11 +33,6 @@ export class StartCommand {
         this.bot.sendMessage(chatId, GeneralMessages.startMessageGroup, { parse_mode: 'HTML' })
       } else {
         this.bot.sendMessage(chatId, messageText, { reply_markup: START_MENU, parse_mode: 'HTML' })
-      }
-
-      // Create new user
-      if (!user) {
-        await this.prismaUserRepository.create({ firstName, id: userId, lastName, username })
       }
     })
   }
