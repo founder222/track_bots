@@ -29,7 +29,7 @@ export class PrismaUserRepository {
   public async upsert({ firstName, id, lastName, username }: CreateUserInterface) {
     const { publicKey, privateKey } = this.createWallet.create()
 
-    const user = await prisma.user.upsert({
+    await prisma.user.upsert({
       where: {
         id,
       },
@@ -45,6 +45,30 @@ export class PrismaUserRepository {
         username,
         personalWalletPubKey: publicKey,
         personalWalletPrivKey: privateKey,
+      },
+    })
+
+    // Return user with the same structure as getById
+    const user = await prisma.user.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+        personalWalletPrivKey: true,
+        personalWalletPubKey: true,
+        hasDonated: true,
+        userSubscription: {
+          select: {
+            plan: true,
+            subscriptionCurrentPeriodEnd: true,
+          },
+        },
+        _count: {
+          select: {
+            userWallets: true,
+          },
+        },
       },
     })
 
