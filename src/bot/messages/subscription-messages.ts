@@ -25,42 +25,42 @@ export class SubscriptionMessages {
       : 'N/A'
 
     const messageText = `
-Current plan: ${subscriptionPlan === 'FREE' ? `😿 <b>${subscriptionPlan}</b>` : `😺 <b>${subscriptionPlan}</b>`}
-${subscriptionPlan !== 'FREE' ? `<b>Your subscription will renew <u>${formattedDate}</u></b>\n` : ''}
-<b>By upgrading to any plan, you can:</b>
-✅ Track more wallets to expand your monitoring capabilities.
-✅ Prevent wallet cleanups.
-✅ Get access to <b>PREMIUM</b> features.
+Текущий тариф: ${subscriptionPlan === 'FREE' ? `😿 <b>${subscriptionPlan}</b>` : `😺 <b>${subscriptionPlan}</b>`}
+${subscriptionPlan !== 'FREE' ? `<b>Ваша подписка будет продлена <u>${formattedDate}</u></b>\n` : ''}
+<b>Обновив до любого тарифа, вы сможете:</b>
+✅ Отслеживать больше кошельков для расширения возможностей мониторинга.
+✅ Предотвратить удаление кошельков.
+✅ Получить доступ к <b>ПРЕМИУМ</b> функциям.
 
-<b>Choose your plan:</b>
-<b>HOBBY</b>: ${MAX_HOBBY_WALLETS} wallets - ${HOBBY_PLAN_FEE / 1e9} <b>SOL</b> / month 
-<b>PRO</b>: ${MAX_PRO_WALLETS} wallets - ${PRO_PLAN_FEE / 1e9} <b>SOL</b> / month
-<b>WHALE</b>: ${MAX_WHALE_WALLETS} wallets - ${WHALE_PLAN_FEE / 1e9} <b>SOL</b> / month
+<b>Выберите ваш тариф:</b>
+<b>HOBBY</b>: ${MAX_HOBBY_WALLETS} кошельков - ${HOBBY_PLAN_FEE / 1e9} <b>SOL</b> / месяц
+<b>PRO</b>: ${MAX_PRO_WALLETS} кошельков - ${PRO_PLAN_FEE / 1e9} <b>SOL</b> / месяц
+<b>WHALE</b>: ${MAX_WHALE_WALLETS} кошельков - ${WHALE_PLAN_FEE / 1e9} <b>SOL</b> / месяц
 
-<b>How to upgrade your plan?</b>
-1. Transfer the required <b>SOL</b> to your <b>Bot</b> wallet: <code>${user?.personalWalletPubKey}</code>
-2. Now you can select one of the plans below!
+<b>Как обновить ваш тариф?</b>
+1. Переведите необходимое количество <b>SOL</b> на ваш кошелек <b>Бота</b>: <code>${user?.personalWalletPubKey}</code>
+2. Теперь вы можете выбрать один из тарифов ниже!
 `
 
     return messageText
   }
 
   static groupChatNotPro = `
-🚫 You can only add Bot to a group if you have a <b>PRO</b> or a <b>WHALE</b> subscription.
+🚫 Вы можете добавить бота в группу только если у вас есть подписка <b>PRO</b> или <b>WHALE</b>.
 
-You can upgrade your plan directly from our official bot:
+Вы можете обновить ваш тариф напрямую из нашего официального бота:
 
 @${BOT_USERNAME}
 `
 
   static userUpgradeGroups = `
-To add <b>Bot</b> to Groups, you need a <b>PRO</b> or <b>WHALE</b> subscription
+Чтобы добавить <b>Бота</b> в группы, вам нужна подписка <b>PRO</b> или <b>WHALE</b>
 
-<b>Click the button below to upgrade your subscription and access to our exclusive features!</b>
+<b>Нажмите кнопку ниже, чтобы обновить подписку и получить доступ к нашим эксклюзивным функциям!</b>
 `
 
   static userGroupsLimit = `
-You’ve reached the maximum limit of groups you can add <b>(${MAX_USER_GROUPS}).</b> 
-To add a new group, please remove an existing one.
+Вы достигли максимального лимита групп, которые можете добавить <b>(${MAX_USER_GROUPS}).</b>
+Чтобы добавить новую группу, пожалуйста, удалите существующую.
 `
 }
