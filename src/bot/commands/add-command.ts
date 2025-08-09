@@ -85,7 +85,7 @@ export class AddCommand {
           .filter(Boolean) // Split input by new lines, trim, and remove empty lines
 
         if (!walletEntries || walletEntries.length === 0) {
-          this.bot.sendMessage(message.chat.id, 'No wallet addresses provided.')
+          this.bot.sendMessage(message.chat.id, 'Адреса кошельков не предоставлены.')
           return
         }
 
@@ -126,13 +126,13 @@ export class AddCommand {
 
           // Validate the wallet before pushing to the database
           if (!base58Regex.test(walletAddress)) {
-            this.bot.sendMessage(message.chat.id, `😾 Address provided is not a valid Solana wallet`)
+            this.bot.sendMessage(message.chat.id, `😾 Предоставленный адрес не является действительным кошельком Solana`)
             continue
           }
 
           const publicKeyWallet = new PublicKey(walletAddress)
           if (!PublicKey.isOnCurve(publicKeyWallet.toBytes())) {
-            this.bot.sendMessage(message.chat.id, `😾 Address provided is not a valid Solana wallet`)
+            this.bot.sendMessage(message.chat.id, `😾 Предоставленный адрес не является действительным кошельком Solana`)
             continue
           }
 
@@ -158,14 +158,14 @@ export class AddCommand {
           const isWalletAlready = await this.prismaWalletRepository.getUserWalletById(userId, walletAddress)
 
           if (isWalletAlready) {
-            this.bot.sendMessage(message.chat.id, `🙀 You already follow the wallet: ${walletAddress}`)
+            this.bot.sendMessage(message.chat.id, `🙀 Вы уже отслеживаете кошелек: ${walletAddress}`)
             continue
           }
 
           // Add wallet to the database
           await this.prismaWalletRepository.create(userId!, walletAddress!, walletName)
 
-          this.bot.sendMessage(message.chat.id, `🎉 Wallet ${walletAddress} has been added.`)
+          this.bot.sendMessage(message.chat.id, `🎉 Кошелек ${walletAddress} был добавлен.`)
         }
 
         // Remove the listener to avoid duplicate handling
@@ -179,7 +179,7 @@ export class AddCommand {
     } catch (error) {
       this.bot.sendMessage(
         message.chat.id,
-        `😾 Somthing went wrong when adding this wallet! please try with another address`,
+        `😾 Что-то пошло не так при добавлении этого кошелька! Пожалуйста, попробуйте с другим адресом`,
       )
       return
     }
