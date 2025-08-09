@@ -1,37 +1,37 @@
 export class HelpMessages {
   static generalHelp = `
-How to use <b>Bot Wallet Tracker Bot: </b>
+Как использовать <b>Бот Трекер Кошельков: </b>
 
-🔮 Main Commands:
-/start - Open main menu
-/add - Add wallet(s)
-/delete - Delete wallets(s)
-/manage - Manage all your tracked wallets
-/upgrade - Upgrade your Bot plan
+🔮 Основные команды:
+/start - Открыть главное меню
+/add - Добавить кошелек(и)
+/delete - Удалить кошелек(и)
+/manage - Управлять всеми отслеживаемыми кошельками
+/upgrade - Обновить тариф бота
 
-🆘 Help Commands:
-/help_notify - How to use Bot notifications
-/help_group - How to add Bot to group chats
+🆘 Команды помощи:
+/help_notify - Как использовать уведомления бота
+/help_group - Как добавить бота в групповые чаты
 `
 
   static groupsHelp = `
-<b>How to add Bot to Telegram groups:</b>
+<b>Как добавить бота в группы Telegram:</b>
 
-1️⃣ Add Bot as an administrator in your Group chat
-2️⃣ Send /start in the Group Chat
-3️⃣ Send /activate | after this only the person who activated the bot will be able to add or delete wallets
-4️⃣ Send /add to start adding wallets
+1️⃣ Добавьте бота как администратора в ваш групповой чат
+2️⃣ Отправьте /start в групповом чате
+3️⃣ Отправьте /activate | после этого только тот, кто активировал бота, сможет добавлять или удалять кошельки
+4️⃣ Отправьте /add чтобы начать добавлять кошельки
 `
 
   static notifyHelp = `
-<b>How to use Bot Bot:</b>
-1️⃣ Send /start
-2️⃣ Click on <b>Add</b> Button
-3️⃣ Paste the address you want to track
+<b>Как использовать бота:</b>
+1️⃣ Отправьте /start
+2️⃣ Нажмите на кнопку <b>Добавить</b>
+3️⃣ Вставьте адрес, который хотите отслеживать
 
-<b>Understand Bot notifications:</b>
-<b>@</b> - Token Price
-<b>MC</b> - Token Market Cap
-<b>HOLDS</b> - Amount of tokens and supply percentage this wallet holds
+<b>Понимание уведомлений бота:</b>
+<b>@</b> - Цена токена
+<b>MC</b> - Рыночная капитализация токена
+<b>HOLDS</b> - Количество токенов и процент от общего предложения, которое держит этот кошелек
 `
 }
