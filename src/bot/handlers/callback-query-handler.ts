@@ -64,44 +64,69 @@ export class CallbackQueryHandler {
       const message = callbackQuery.message
       const chatId = message?.chat.id
       const data = callbackQuery.data
+      const queryId = callbackQuery.id
 
-      // Immediate feedback to user - CRITICAL FIX
-      if (callbackQuery.id) {
-        // Не блокируем выполнение, отвечаем сразу
-        this.bot.answerCallbackQuery(callbackQuery.id).catch(err => {
-          console.error('Failed to answer callback query:', err)
-        })
+      console.log(`[CALLBACK] Received callback query: ${data} from user ${chatId}`)
+
+      // КРИТИЧЕСКИ ВАЖНО: отвечаем на callback query НЕМЕДЛЕННО
+      if (queryId) {
+        try {
+          await this.bot.answerCallbackQuery(queryId, {
+            text: '', // Пустой текст - просто убираем "часики"
+            show_alert: false
+          })
+          console.log(`[CALLBACK] Answered callback query ${queryId} successfully`)
+        } catch (err) {
+          console.error(`[CALLBACK] Failed to answer callback query ${queryId}:`, err)
+          // Если не получилось ответить, пробуем еще раз через 100ms
+          setTimeout(async () => {
+            try {
+              await this.bot.answerCallbackQuery(queryId, { text: '' })
+              console.log(`[CALLBACK] Retry: answered callback query ${queryId}`)
+            } catch (retryErr) {
+              console.error(`[CALLBACK] Retry failed for query ${queryId}:`, retryErr)
+            }
+          }, 100)
+        }
       }
 
       const userId = message?.chat.id.toString()
 
       if (!chatId || !userId) {
+        console.warn('[CALLBACK] Missing chatId or userId')
         return
       }
 
-      // Добавляем общий timeout и обработку ошибок
+      // Обрабатываем callback query с timeout
       try {
+        console.log(`[CALLBACK] Processing callback query: ${data} for user ${userId}`)
         await Promise.race([
           this.processCallbackQuery(data, message, userId, chatId),
           new Promise((_, reject) =>
-            setTimeout(() => reject(new Error('Callback query timeout')), 10000)
+            setTimeout(() => reject(new Error('Callback query timeout')), 15000)
           )
         ])
+        console.log(`[CALLBACK] Successfully processed callback query: ${data} for user ${userId}`)
       } catch (error) {
-        console.error(`Error processing callback query for user ${userId}:`, error)
-        // Уведомляем пользователя о проблеме
-        this.bot.sendMessage(chatId, '⚠️ Произошла ошибка при обработке команды. Попробуйте еще раз.')
-          .catch(err => console.error('Failed to send error message:', err))
+        console.error(`[CALLBACK] Error processing callback query ${data} for user ${userId}:`, error)
+        // Уведомляем пользователя о проблеме только если это не timeout
+        if (error instanceof Error && !error.message.includes('timeout')) {
+          this.bot.sendMessage(chatId, '⚠️ Произошла ошибка при обработке команды. Попробуйте еще раз.')
+            .catch(err => console.error('[CALLBACK] Failed to send error message:', err))
+        }
       }
     })
   }
 
   private async processCallbackQuery(data: string | undefined, message: TelegramBot.Message, userId: string, chatId: number) {
+      console.log(`[PROCESS] Starting callback query processing: data="${data}", userId="${userId}", chatId="${chatId}"`)
+
       // Проверяем rate limit
       if (!rateLimiter.isAllowed(userId, 'callback_query')) {
         const resetTime = rateLimiter.getResetTime(userId, 'callback_query')
         const waitMinutes = Math.ceil((resetTime - Date.now()) / 60000)
 
+        console.log(`[PROCESS] Rate limit hit for user ${userId}`)
         await this.bot.sendMessage(chatId,
           `⚠️ Слишком много запросов. Подождите ${waitMinutes} мин.`
         ).catch(() => {}) // Игнорируем ошибки отправки
@@ -113,61 +138,79 @@ export class CallbackQueryHandler {
       // handle donations
       if (data?.startsWith('donate_action')) {
         const donationAmount = data.split('_')[2]
-        console.log(`User wants to donate ${donationAmount} SOL`)
+        console.log(`[PROCESS] User ${userId} wants to donate ${donationAmount} SOL`)
         await this.donateHandler.makeDonation(message, Number(donationAmount))
         return
       }
 
+      console.log(`[PROCESS] Processing switch case for data: "${data}"`)
       switch (data) {
         case 'add':
-          this.addCommand.addButtonHandler(message)
+          console.log(`[PROCESS] Executing 'add' for user ${userId}`)
+          await this.addCommand.addButtonHandler(message)
           break
         case 'manage':
+          console.log(`[PROCESS] Executing 'manage' for user ${userId}`)
           await this.manageCommand.manageButtonHandler(message)
           break
         case 'delete':
-          this.deleteCommand.deleteButtonHandler(message)
+          console.log(`[PROCESS] Executing 'delete' for user ${userId}`)
+          await this.deleteCommand.deleteButtonHandler(message)
           break
         case 'settings':
-          this.settingsCommand.settingsCommandHandler(message)
+          console.log(`[PROCESS] Executing 'settings' for user ${userId}`)
+          await this.settingsCommand.settingsCommandHandler(message)
           break
         case 'pause-resume-bot':
+          console.log(`[PROCESS] Executing 'pause-resume-bot' for user ${userId}`)
           await this.updateBotStatusHandler.pauseResumeBot(message)
           break
         case 'upgrade':
-          this.upgradePlanCommand.upgradePlanButtonHandler(message)
+          console.log(`[PROCESS] Executing 'upgrade' for user ${userId}`)
+          await this.upgradePlanCommand.upgradePlanButtonHandler(message)
           break
         case 'upgrade_hobby':
+          console.log(`[PROCESS] Executing 'upgrade_hobby' for user ${userId}`)
           await this.upgradePlanHandler.upgradePlan(message, 'HOBBY')
           break
         case 'upgrade_pro':
+          console.log(`[PROCESS] Executing 'upgrade_pro' for user ${userId}`)
           await this.upgradePlanHandler.upgradePlan(message, 'PRO')
           break
         case 'upgrade_whale':
+          console.log(`[PROCESS] Executing 'upgrade_whale' for user ${userId}`)
           await this.upgradePlanHandler.upgradePlan(message, 'WHALE')
           break
         case 'donate':
+          console.log(`[PROCESS] Executing 'donate' for user ${userId}`)
           await this.donateCommand.donateCommandHandler(message)
           break
         case 'groups':
+          console.log(`[PROCESS] Executing 'groups' for user ${userId}`)
           await this.groupsCommand.groupsButtonHandler(message)
           break
         case 'delete_group':
+          console.log(`[PROCESS] Executing 'delete_group' for user ${userId}`)
           await this.groupsCommand.deleteGroupButtonHandler(message)
           break
         case 'help':
-          this.helpCommand.helpButtonHandler(message)
+          console.log(`[PROCESS] Executing 'help' for user ${userId}`)
+          await this.helpCommand.helpButtonHandler(message)
           break
         case 'my_wallet':
-          this.myWalletCommand.myWalletCommandHandler(message)
+          console.log(`[PROCESS] Executing 'my_wallet' for user ${userId}`)
+          await this.myWalletCommand.myWalletCommandHandler(message)
           break
         case 'show_private_key':
-          this.myWalletCommand.showPrivateKeyHandler(message)
+          console.log(`[PROCESS] Executing 'show_private_key' for user ${userId}`)
+          await this.myWalletCommand.showPrivateKeyHandler(message)
           break
         case 'buy_promotion':
-          this.promotionHandler.buyPromotion(message, GET_50_WALLETS_PROMOTION.price, GET_50_WALLETS_PROMOTION.type)
+          console.log(`[PROCESS] Executing 'buy_promotion' for user ${userId}`)
+          await this.promotionHandler.buyPromotion(message, GET_50_WALLETS_PROMOTION.price, GET_50_WALLETS_PROMOTION.type)
           break
         case 'back_to_main_menu':
+          console.log(`[PROCESS] Executing 'back_to_main_menu' for user ${userId}`)
           const user = await this.userRepository.getById(userId)
           const messageText = GeneralMessages.startMessage(user)
 
@@ -176,7 +219,7 @@ export class CallbackQueryHandler {
           userExpectingDonation[chatId] = false
           userExpectingGroupId[chatId] = false
 
-          this.bot.editMessageText(messageText, {
+          await this.bot.editMessageText(messageText, {
             chat_id: chatId,
             message_id: message.message_id,
             reply_markup: START_MENU,
@@ -184,7 +227,10 @@ export class CallbackQueryHandler {
           })
           break
         default:
+          console.log(`[PROCESS] Unknown callback data: "${data}" for user ${userId}`)
           responseText = 'Неизвестная команда.'
       }
+
+      console.log(`[PROCESS] Completed callback query processing for data="${data}", userId="${userId}"`)
   }
 }
