@@ -95,7 +95,7 @@ export class GroupsCommand {
 
         this.bot.sendMessage(
           chatId,
-          `🐱 Group ${groupName} has been activated! Remember only you can update this bot settings`,
+          `🐱 Группа ${groupName} была активирована! Помните, что только вы можете изменять настройки этого бота`,
         )
 
         return
@@ -104,7 +104,7 @@ export class GroupsCommand {
       this.bot.sendMessage(
         chatId,
         `
-😾 This group has been already activated
+😾 Эта группа уже была активирована
 `,
       )
     })
