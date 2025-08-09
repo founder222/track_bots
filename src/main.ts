@@ -67,8 +67,27 @@ async function createAndRegisterBot(token: string) {
   if (USE_POLLING) {
     // Use polling for debugging
     console.log(`[bot ${botId}] starting polling mode`)
-    bot.startPolling({ restart: true })
-    console.log(`[bot ${botId}] polling started`)
+
+    // ВАЖНО: Очищаем webhook перед включением polling
+    await bot.deleteWebHook({ drop_pending_updates: true }).catch(err => {
+      console.warn(`[bot ${botId}] failed to delete webhook:`, err.message)
+    })
+
+    // Добавляем задержку между запуском ботов чтобы избежать конфликтов
+    await new Promise(resolve => setTimeout(resolve, 1000))
+
+    await bot.startPolling({
+      restart: true,
+      polling: {
+        interval: 1000,  // 1 секунда между запросами
+        autoStart: true,
+        params: {
+          timeout: 10,
+          limit: 100
+        }
+      }
+    })
+    console.log(`[bot ${botId}] polling started successfully`)
   } else if (APP_URL_BASE) {
     // Use webhook for production
     const url = `${APP_URL_BASE.replace(/\/$/, '')}/webhook/${botId}`
