@@ -43,15 +43,16 @@ export class TxMessages {
     const bullxLink = `<a href="https://neo.bullx.io/terminal?chainId=1399811149&address=${tokenMintToTrack}">Bullx</a>`
 
     const marketCapText = tokenMarketCap
-      ? `🔗 ${message.type === 'buy' ? `<b><a href="${solscanTokenInUrl}">#${tokenIn}</a></b>` : `<b><a href="${solscanTokenOutUrl}">#${tokenOut}</a></b>`} | <b>MC: $${tokenMarketCap}</b> | ${gmgnLink} • ${beLink} • ${dsLink} • ${phLink} • ${bullxLink}`
+      ? `🔗 ${message.type === 'buy' ? `<b><a href="${solscanTokenInUrl}">#${tokenIn}</a></b>` : `<b><a href="${solscanTokenOutUrl}">#${tokenOut}</a></b>`} | <b>Кап: $${tokenMarketCap}</b> | ${gmgnLink} • ${beLink} • ${dsLink} • ${phLink} • ${bullxLink}`
       : ''
 
     const messageText = `
-${message.type === 'buy' ? '🟢' : '🔴'} <b><a href="${solscanTxUrl}">${message.type?.toUpperCase()} ${message.type === 'buy' ? `${tokenIn}` : `${tokenOut}`}</a></b> on ${message.platform!.toUpperCase()}
-<b>💎 ${walletName !== '' ? walletName : truncatedOwner}</b>\n
-💎 <b><a href="${solscanAddressUrl}">${walletName !== '' ? walletName : truncatedOwner}</a></b> swapped <b>${amountOut}</b>${message.type === 'sell' ? ` ($${fixedUsdAmount})` : ''} <b><a href="${solscanTokenOutUrl}">${tokenOut}</a></b> for <b>${amountIn}</b>${message.type === 'buy' ? ` ($${fixedUsdAmount})` : ''} <b><a href="${solscanTokenInUrl}">${tokenIn}</a></b> @$${message.swappedTokenPrice?.toFixed(7)}
+${message.type === 'buy' ? '🟢' : '🔴'} <b><a href="${solscanTxUrl}">${message.type === 'buy' ? 'ПОКУПКА' : 'ПРОДАЖА'} ${message.type === 'buy' ? `${tokenIn}` : `${tokenOut}`}</a></b> на ${message.platform!.toUpperCase()}
+<b>💎 ${walletName !== '' ? walletName : truncatedOwner}</b>
 
-${Number(message.currenHoldingPercentage) > 0 ? '📈' : '📉'} <b>HOLDS: ${message.currentHoldingPrice} (${message.currenHoldingPercentage}%)</b>
+💎 <b><a href="${solscanAddressUrl}">${walletName !== '' ? walletName : truncatedOwner}</a></b> обменял <b>${amountOut}</b>${message.type === 'sell' ? ` ($${fixedUsdAmount})` : ''} <b><a href="${solscanTokenOutUrl}">${tokenOut}</a></b> на <b>${amountIn}</b>${message.type === 'buy' ? ` ($${fixedUsdAmount})` : ''} <b><a href="${solscanTokenInUrl}">${tokenIn}</a></b> по $${message.swappedTokenPrice?.toFixed(7)}
+
+${Number(message.currenHoldingPercentage) > 0 ? '📈' : '📉'} <b>ДЕРЖИТ: ${message.currentHoldingPrice} (${message.currenHoldingPercentage}%)</b>
 ${marketCapText}
 <code>${tokenMintToTrack}</code>
 `
@@ -86,13 +87,14 @@ ${marketCapText}
     const phLink = `<a href="https://photon-sol.tinyastro.io/en/lp/${tokenMintToTrack}">PH</a>`
 
     const messageText = `
-⭐🔁 <a href="${solscanTxUrl}">SWAP</a> on PUMPFUN
-<b>💎 ${walletName !== '' ? walletName : truncatedOwner}</b>\n
-💎 <a href="${solscanAddressUrl}">${walletName !== '' ? walletName : truncatedOwner}</a> minted and swapped <b>${amountOut}</b><a href="${solscanTokenOutUrl}">${tokenOut}</a> for <b>${amountIn}</b>($${fixedUsdAmount}) <a href="${solscanTokenInUrl}">${tokenIn}</a> 
+⭐🔁 <a href="${solscanTxUrl}">ОБМЕН</a> на PUMPFUN
+<b>💎 ${walletName !== '' ? walletName : truncatedOwner}</b>
+
+💎 <a href="${solscanAddressUrl}">${walletName !== '' ? walletName : truncatedOwner}</a> создал и обменял <b>${amountOut}</b><a href="${solscanTokenOutUrl}">${tokenOut}</a> на <b>${amountIn}</b>($${fixedUsdAmount}) <a href="${solscanTokenInUrl}">${tokenIn}</a>
 
 <b>💣 ${tokenIn}</b>| ${gmgnLink} • ${beLink} • ${dsLink} • ${phLink}
 
-<code>${tokenMintToTrack}</code>   
+<code>${tokenMintToTrack}</code>
 `
     return messageText
   }
