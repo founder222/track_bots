@@ -39,9 +39,9 @@ export class MyWalletCommand {
     const userPrivKey = await this.prismaUserRepository.showUserPrivateKey(userId)
 
     const messageText = `
-Your private key (do not share with anyone!!!)
+Ваш приватный ключ (не делитесь ни с кем!!!)
 
-(Click to copy)
+(Нажмите, чтобы скопировать)
 <code>${userPrivKey ? userPrivKey : ''}</code>
 `
 
